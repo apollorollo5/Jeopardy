@@ -1,3 +1,8 @@
+### Acceptance creiteria for minimum viable product.
+1.) The intro menu has start and exit button.
+2.) The main gameplay will contain 4 potential answers and 1 question.
+3.) 2.) repeats
+
 # Execute the below command to get started:
 pip install -r requirements.txt
 

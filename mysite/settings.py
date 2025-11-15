@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-$6@g^(jkxi9*ycf74!7z-i%e^xbec_-gb%p&d09!mr@_%w0)yx'
 
 # Gemini / Google GenAI settings
-GEMINI_API_KEY = "PASTE_YOUR_REAL_KEY_HERE"
+GEMINI_API_KEY = "This is where you insert your key"
 
 # This is where Django will look for assets like images and audios.
 STATIC_URL = "static/"

@@ -31,7 +31,7 @@ def game_board(request, game_id):
             'game_phase': game.phase,
         }
         
-        return render(request, "main/game_board.html", context)
+        return render(request, "main/main_page.html", context)
     except Game.DoesNotExist:
         return redirect('home')
 

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Gemini + Django</title>
+</head>
+<body>
+  <h1>Ask Gemini</h1>
+  <p>We don't have the API key for it yet, so, the feature below doesn't work.</p>
+  <form method="post">
+    {% csrf_token %}
+    <textarea name="prompt" rows="4" cols="60">{{ prompt }}</textarea>
+    <br>
+    <button type="submit">Send</button>
+  </form>
+
+  {% if answer %}
+    <h2>Response</h2>
+    <pre>{{ answer }}</pre>
+  {% endif %}
+</body>
+</html>

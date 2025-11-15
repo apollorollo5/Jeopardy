@@ -1,21 +1,67 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Gemini + Django</title>
-</head>
-<body>
-  <h1>Ask Gemini</h1>
-  <form method="post">
-    {% csrf_token %}
-    <textarea name="prompt" rows="4" cols="60">{{ prompt }}</textarea>
-    <br>
-    <button type="submit">Send</button>
-  </form>
+<meta charset="UTF-8">
+<title>Jeopardy</title>
 
-  {% if answer %}
-    <h2>Response</h2>
-    <pre>{{ answer }}</pre>
-  {% endif %}
+<style>
+  body {
+    background: #f7f5e9; /* light cream like your sketch */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: "Comic Sans MS", cursive, sans-serif; /* handwritten style */
+  }
+
+  .container {
+    border: 4px solid black;
+    width: 80%;
+    height: 75%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 30px;
+  }
+
+  .title {
+    text-align: center;
+    font-size: 60px;
+    margin-top: 40px;
+  }
+
+  .button-area {
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 50px;
+  }
+
+  .btn-box {
+    border: 4px solid black;
+    padding: 25px 80px;
+    font-size: 40px;
+    cursor: pointer;
+    background: none;
+    transition: 0.2s;
+  }
+
+  .btn-box:hover {
+    background: #ddd;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="title">Jeopardy!</div>
+
+  <div class="button-area">
+    <button class="btn-box" onclick="location.href='game.html'">Start</button>
+    <button class="btn-box" onclick="window.close()">Exit</button>
+  </div>
+</div>
+
 </body>
 </html>

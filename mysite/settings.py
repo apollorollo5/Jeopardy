@@ -10,10 +10,21 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load .env in development if python-dotenv is available. This is optional
+# and lets developers put local env vars in a `.env` file at the project root.
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv(BASE_DIR / '.env')
+except Exception:
+    # If python-dotenv isn't installed or .env is missing, continue silently.
+    pass
 
 
 # Quick-start development settings - unsuitable for production
@@ -23,7 +34,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-$6@g^(jkxi9*ycf74!7z-i%e^xbec_-gb%p&d09!mr@_%w0)yx'
 
 # Gemini / Google GenAI settings
-GEMINI_API_KEY = "This is where you insert your key"
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "This is where you insert your key")
 
 # This is where Django will look for assets like images and audios.
 STATIC_URL = "static/"

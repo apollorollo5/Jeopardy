@@ -27,6 +27,25 @@ Confirm, and Google will generate a key string (long random characters).
 
 Copy that key — this is your GEMINI_API_KEY, this is in `settings.py`.
 
+How to provide the GEMINI_API_KEY to the app (recommended)
+
+Option A — environment variable (recommended, safe):
+
+PowerShell (temporary for this session):
+
+```powershell
+$env:GEMINI_API_KEY = "your-real-gemini-key-here"
+python manage.py runserver
+```
+
+Or set it permanently in your user/system environment variables via Windows settings.
+
+Option B — .env file (convenient for local development):
+
+1. Copy `.env.example` to `.env` in the project root.
+2. Fill in `GEMINI_API_KEY=your-real-gemini-api-key-here`.
+3. We include `python-dotenv` in `requirements.txt` so `mysite/settings.py` will try to load `.env` automatically in development.
+
 # Execute the below command to get started:
 pip install -r requirements.txt
 

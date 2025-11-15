@@ -5,6 +5,7 @@ pip install -r requirements.txt
 python manage.py runserver
 
 # The structure of the project at the moment:
+```
 mysite/                 ← project root (folder name doesn’t matter)
 ├── manage.py
 ├── requirements.txt
@@ -32,3 +33,4 @@ mysite/                 ← project root (folder name doesn’t matter)
             │   └── bgm.mp3
             └── js/
                 └── app.js
+```

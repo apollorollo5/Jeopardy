@@ -4,29 +4,6 @@
 2.) The main gameplay will contain 4 potential answers and 1 question.
 3.) 2.) repeats
 ```
-### How to set up Gemini API key.
-How to get a Gemini API key (Developer key)
-
-Go to Google AI Studio:
-👉 https://aistudio.google.com/
-
-Sign in with your Google account.
-
-If it’s your first time:
-
-Accept the Gemini / Generative AI Terms of Service.
-
-In the left sidebar, open “API keys”
-(or click any big “Get API key” / “Create API key” button you see).
-
-Click “Create API key”:
-
-Choose an existing project or create a new one.
-
-Confirm, and Google will generate a key string (long random characters).
-
-Copy that key — this is your GEMINI_API_KEY, this is in `settings.py`.
-
 # Execute the below command to get started:
 pip install -r requirements.txt
 

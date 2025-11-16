@@ -10,7 +10,8 @@
         margin: 0;
         padding: 0;
         display: flex;
-        justify-content: center;
+        flex-direction: column;
+        justify-content: flex-start;
         align-items: center;
         height: 100vh;
         font-family: Arial Black, sans-serif;
@@ -23,6 +24,7 @@
         display: grid;
         grid-template-columns: repeat(6, 1fr);
         gap: 5px;
+        margin-top: 20px;
     }
 
     /* Category boxes */
@@ -52,17 +54,61 @@
         background: #003bbd;
         transform: scale(1.05);
     }
+
+    /* Score box */
+    .score-box {
+        margin-top: 25px;
+        background: #001f7b;
+        border: 4px solid #0c1d63;
+        padding: 15px 30px;
+        font-size: 28px;
+        color: #ffcc33;
+        text-align: center;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px #000;
+    }
+
+    /* End Game */
+    .bottom-end-btn {
+        text-align: center;
+        margin-top: 40px;
+    }
+
+    .end-btn {
+        background: #990000;
+        border: 3px solid #660000;
+        color: white;
+        padding: 10px 15px;
+        font-size: 20px;
+        cursor: pointer;
+        font-family: Arial Black, sans-serif;
+        border-radius: 6px;
+        transition: 0.2s;
+    }
+
+    .end-btn:hover {
+        background: #cc0000;
+        transform: scale(1.05);
+    }
 </style>
 </head>
 
 <body>
 
+<!-- Score Box -->
+<div class="score-box">
+    Total: $0
+</div>
+
 <div class="board">
 
     <!-- Categories -->
-    {% for title, questions in board_state.items %}
-    <div class="category">{{ title }}</div>
-    {% endfor %}
+    <div class="category">Question</div>
+    <div class="category">Question</div>
+    <div class="category">Question</div>
+    <div class="category">Question</div>
+    <div class="category">Question</div>
+    <div class="category">Question</div>
 
     <!-- Row 1 -->
     <div class="tile">$200</div>
@@ -105,34 +151,10 @@
     <div class="tile">$1000</div>
 
 </div>
+
 <div class="bottom-end-btn">
     <a href="{% url 'home' %}" class="end-btn">End Game</a>
 </div>
 
-<style>
-.bottom-end-btn {
-    text-align: center;
-    margin-top: 800px;
-   
-}   
-
-.end-btn {
-    background: #990000;
-    border: 3px solid #660000;
-    color: white;
-    padding: 10px 15px;
-    font-size: 20px;
-    cursor: pointer;
-    font-family: Arial Black, sans-serif;
-    border-radius: 6px;
-    transition: 0.2s;
-    margin-left: -130px;
-}
-
-.end-btn:hover {
-    background: #cc0000;
-    transform: scale(1.05);
-}
-</style>
 </body>
 </html>

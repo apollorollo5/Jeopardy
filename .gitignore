@@ -6,4 +6,5 @@ __pycache__/
 */migrations/*
 !*/migrations/__init__.py
 db.sqlite3
-mysite/__pycache__/settings.cpython-311.pyc
+.env
+db.sqlite3

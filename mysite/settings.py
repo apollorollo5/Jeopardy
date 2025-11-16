@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-$6@g^(jkxi9*ycf74!7z-i%e^xbec_-gb%p&d09!mr@_%w0)yx'
 
 # Gemini / Google GenAI settings
-GEMINI_API_KEY = "This is where you insert your key"
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
 
 # This is where Django will look for assets like images and audios.
 STATIC_URL = "static/"

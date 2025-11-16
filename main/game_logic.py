@@ -34,51 +34,54 @@ class JeopardyGame:
     
     def _generate_categories_and_questions(self, num_categories: int):
         """
-        Use Gemini to generate random Jeopardy categories and questions
-        
-        This calls the Gemini API to create fun, varied questions
+        Use Gemini to generate random Jeopardy categories and questions.
+        Falls back to dummy questions if Gemini fails.
         """
-        prompt = f"""Generate {num_categories} Jeopardy categories and 5 questions per category.
+        from .gemini_client import ask_gemini_json
+        import logging
         
-        Format your response as JSON (valid JSON only, no markdown):
-        {{
-            "categories": [
-                {{
-                    "title": "Category Name",
-                    "questions": [
-                        {{"value": 200, "question": "Question here?", "answer": "Answer here"}},
-                        {{"value": 400, "question": "Question here?", "answer": "Answer here"}},
-                        {{"value": 600, "question": "Question here?", "answer": "Answer here"}},
-                        {{"value": 800, "question": "Question here?", "answer": "Answer here"}},
-                        {{"value": 1000, "question": "Question here?", "answer": "Answer here"}}
-                    ]
-                }}
-            ]
-        }}
+        logger = logging.getLogger(__name__)
         
-        Make questions fun, interesting, and varied in difficulty!"""
+        prompt = f"""You will respond with ONLY valid JSON, no markdown, no explanation.
+
+Generate {num_categories} Jeopardy categories. Each category has a "title" and "questions" array with exactly 5 questions.
+Each question has: value (200,400,600,800,1000), question (string), answer (string).
+
+{{
+  "categories": [
+    {{
+      "title": "CATEGORY_TITLE",
+      "questions": [
+        {{"value": 200, "question": "Q?", "answer": "A"}},
+        {{"value": 400, "question": "Q?", "answer": "A"}},
+        {{"value": 600, "question": "Q?", "answer": "A"}},
+        {{"value": 800, "question": "Q?", "answer": "A"}},
+        {{"value": 1000, "question": "Q?", "answer": "A"}}
+      ]
+    }}
+  ]
+}}
+
+Make questions fun, interesting, varied difficulty, family-friendly."""
         
         try:
-            response_text = ask_gemini(prompt)
+            # Try to get JSON from Gemini
+            response_data = ask_gemini_json(prompt)
             
-            # Parse JSON response
-            import json
-            import re
+            # Validate and create categories/questions
+            if 'categories' not in response_data:
+                raise ValueError("Missing 'categories' key in response")
             
-            # Extract JSON from response (in case there's extra text)
-            json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
-            if json_match:
-                response_data = json.loads(json_match.group())
+            for idx, cat_data in enumerate(response_data['categories']):
+                category = Category.objects.create(
+                    game=self.game,
+                    title=cat_data.get('title', f'Category {idx+1}'),
+                    order=idx
+                )
                 
-                # Create categories and questions in database
-                for idx, cat_data in enumerate(response_data['categories']):
-                    category = Category.objects.create(
-                        game=self.game,
-                        title=cat_data['title'],
-                        order=idx
-                    )
-                    
-                    for q_data in cat_data['questions']:
+                # Create questions (validate each one)
+                for q_data in cat_data.get('questions', []):
+                    if all(k in q_data for k in ['value', 'question', 'answer']):
                         Question.objects.create(
                             category=category,
                             value=q_data['value'],
@@ -86,11 +89,10 @@ class JeopardyGame:
                             answer_text=q_data['answer']
                         )
             
-            print("✓ Questions generated successfully")
+            logger.info(f"✓ Generated {num_categories} categories from Gemini")
         
         except Exception as e:
-            print(f"Error generating questions: {e}")
-            # Fallback: create dummy categories
+            logger.warning(f"Gemini generation failed: {e}. Using fallback dummy questions.")
             self._create_dummy_categories(num_categories)
     
     def _create_dummy_categories(self, num_categories: int):

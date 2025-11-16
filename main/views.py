@@ -29,6 +29,7 @@ def game_board(request, game_id):
             'board_state': game_logic.get_board_state(),
             'current_score': game_logic.get_score(),
             'game_phase': game.phase,
+            'values_list': [200, 400, 600, 800, 1000],
         }
         
         return render(request, "main/main_page.html", context)

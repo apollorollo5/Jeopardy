@@ -139,45 +139,16 @@
     <div class="category">{{ title }}</div>
     {% endfor %}
 
-    <!-- Row 1 -->
-    <div class="tile" onclick="openQuestion('Question for $200')">$200</div>
-    <div class="tile" onclick="openQuestion('Question for $200')">$200</div>
-    <div class="tile" onclick="openQuestion('Question for $200')">$200</div>
-    <div class="tile" onclick="openQuestion('Question for $200')">$200</div>
-    <div class="tile" onclick="openQuestion('Question for $200')">$200</div>
-    <div class="tile" onclick="openQuestion('Question for $200')">$200</div>
-
-    <!-- Row 2 -->
-    <div class="tile" onclick="openQuestion('Question for $400')">$400</div>
-    <div class="tile" onclick="openQuestion('Question for $400')">$400</div>
-    <div class="tile" onclick="openQuestion('Question for $400')">$400</div>
-    <div class="tile" onclick="openQuestion('Question for $400')">$400</div>
-    <div class="tile" onclick="openQuestion('Question for $400')">$400</div>
-    <div class="tile" onclick="openQuestion('Question for $400')">$400</div>
-
-    <!-- Row 3 -->
-    <div class="tile" onclick="openQuestion('Question for $600')">$600</div>
-    <div class="tile" onclick="openQuestion('Question for $600')">$600</div>
-    <div class="tile" onclick="openQuestion('Question for $600')">$600</div>
-    <div class="tile" onclick="openQuestion('Question for $600')">$600</div>
-    <div class="tile" onclick="openQuestion('Question for $600')">$600</div>
-    <div class="tile" onclick="openQuestion('Question for $600')">$600</div>
-
-    <!-- Row 4 -->
-    <div class="tile" onclick="openQuestion('Question for $800')">$800</div>
-    <div class="tile" onclick="openQuestion('Question for $800')">$800</div>
-    <div class="tile" onclick="openQuestion('Question for $800')">$800</div>
-    <div class="tile" onclick="openQuestion('Question for $800')">$800</div>
-    <div class="tile" onclick="openQuestion('Question for $800')">$800</div>
-    <div class="tile" onclick="openQuestion('Question for $800')">$800</div>
-
-    <!-- Row 5 -->
-    <div class="tile" onclick="openQuestion('Question for $1000')">$1000</div>
-    <div class="tile" onclick="openQuestion('Question for $1000')">$1000</div>
-    <div class="tile" onclick="openQuestion('Question for $1000')">$1000</div>
-    <div class="tile" onclick="openQuestion('Question for $1000')">$1000</div>
-    <div class="tile" onclick="openQuestion('Question for $1000')">$1000</div>
-    <div class="tile" onclick="openQuestion('Question for $1000')">$1000</div>
+    <!-- Dynamically Generated Tiles -->
+    {% for value in values_list %}
+        {% for title, data in board_state.items %}
+            {% for question in data.questions %}
+                {% if question.value == value %}
+                    <div class="tile" onclick="openQuestion('{{ question.id }}', '{{ question.value }}')">${{ value }}</div>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
 
 </div>
 
@@ -195,9 +166,23 @@
 
 <!-- POPUP JAVASCRIPT -->
 <script>
-function openQuestion(text) {
-    document.getElementById("popup-question").innerText = text;
-    document.getElementById("popup").style.display = "flex";
+function openQuestion(questionId, value) {
+    // Fetch the question from the server
+    fetch(`/api/question/${questionId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                document.getElementById("popup-question").innerText = "Error loading question";
+            } else {
+                document.getElementById("popup-question").innerText = data.question_text;
+            }
+            document.getElementById("popup").style.display = "flex";
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            document.getElementById("popup-question").innerText = "Error loading question";
+            document.getElementById("popup").style.display = "flex";
+        });
 }
 
 function closePopup() {

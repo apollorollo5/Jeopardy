@@ -103,12 +103,9 @@
 <div class="board">
 
     <!-- Categories -->
-    <div class="category">Question</div>
-    <div class="category">Question</div>
-    <div class="category">Question</div>
-    <div class="category">Question</div>
-    <div class="category">Question</div>
-    <div class="category">Question</div>
+    {% for title, questions in board_state.items %}
+    <div class="category">{{ title }}</div>
+    {% endfor %}
 
     <!-- Row 1 -->
     <div class="tile">$200</div>

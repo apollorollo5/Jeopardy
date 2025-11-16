@@ -2,52 +2,60 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Jeopardy</title>
+<title>Welcome to Jeopardy!</title>
 
 <style>
   body {
-    background: #ffffff; /* light cream like your sketch */
+    background: #02054a; /* deep Jeopardy blue */
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
-    font-family: "Comic Sans MS", cursive, sans-serif; /* handwritten style */
+    font-family: Impact, Arial Black, sans-serif; /* strong Jeopardy look */
+    color: #ffd100; /* Jeopardy yellow */
   }
 
   .container {
-    border: 4px solid black;
-    width: 80%;
-    height: 75%;
+    border: 5px solid #ffd100; /* yellow border */
+    width: 75%;
+    height: 70%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     padding: 30px;
+    box-shadow: 0 0 25px #000;
+    background: #04106a; /* inner darker blue */
   }
 
   .title {
     text-align: center;
-    font-size: 60px;
+    font-size: 80px;
+    letter-spacing: 3px;
     margin-top: 40px;
+    text-shadow: 3px 3px #000;
   }
 
   .button-area {
     display: flex;
     justify-content: space-evenly;
-    margin-bottom: 50px;
+    margin-bottom: 40px;
   }
 
   .btn-box {
-    border: 4px solid black;
+    background: #003bc9; /* Jeopardy tile blue */
+    color: #ffd100;       /* yellow text */
     padding: 25px 80px;
+    border: 4px solid #000;
     font-size: 40px;
     cursor: pointer;
-    background: none;
     transition: 0.2s;
+    box-shadow: 3px 3px #000;
   }
 
   .btn-box:hover {
-    background: #ddd;
+    background: #0054ff;
+    transform: scale(1.05);
   }
 </style>
 </head>
@@ -55,11 +63,11 @@
 <body>
 
 <div class="container">
-  <div class="title">Jeopardy!</div>
+  <div class="title">JEOPARDY!</div>
 
   <div class="button-area">
-    <button class="btn-box" onclick="location.href='new-game'">Start</button>
-    <button class="btn-box" onclick="window.close()">Exit</button>
+    <button class="btn-box" onclick="location.href='new-game'">START</button>
+    <button class="btn-box" onclick="window.close()">EXIT</button>
   </div>
 </div>
 

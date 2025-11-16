@@ -5,3 +5,5 @@ __pycache__/
 # Django migrations (keep __init__.py so Django sees the package)
 */migrations/*
 !*/migrations/__init__.py
+db.sqlite3
+mysite/__pycache__/settings.cpython-311.pyc

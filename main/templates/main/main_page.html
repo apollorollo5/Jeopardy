@@ -5,116 +5,137 @@
 <title>Jeopardy Board</title>
 
 <style>
-  body {
-    background: #f7f5e9;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    font-family: "Comic Sans MS", cursive;
-  }
+    body {
+        background: #000428;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: Arial Black, sans-serif;
+        color: white;
+    }
 
-  .outer-box {
-    width: 90%;
-    height: 90%;
-    border: 4px solid black;
-    padding: 20px;
-    box-sizing: border-box;
-    position: relative;
-  }
+    .board {
+        width: 95%;
+        max-width: 1200px;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 5px;
+    }
 
-  .title-box {
-    width: 40%;
-    margin: 0 auto 20px auto;
-    border: 3px solid black;
-    text-align: center;
-    padding: 10px;
-    font-size: 40px;
-  }
+    /* Category boxes */
+    .category {
+        background: #001f7b;
+        border: 3px solid #0c1d63;
+        padding: 35px;
+        text-align: center;
+        font-size: 20px;
+        text-transform: uppercase;
+        color: white;
+    }
 
-  .grid-box {
-    width: 95%;
-    height: 65%;
-    margin: 0 auto;
-    border: 3px solid black;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(5, 1fr);
-    gap: 10px;
-    padding: 10px;
-  }
+    /* Money tiles */
+    .tile {
+        background: #002d9c;
+        border: 3px solid #0c1d63;
+        padding: 25px;
+        font-size: 32px;
+        text-align: center;
+        color: #ffcc33;
+        cursor: pointer;
+        transition: 0.15s;
+    }
 
-  .tile {
-    border: 3px solid black;
-    background: none;
-    cursor: pointer;
-  }
-
-  .bottom-buttons {
-    position: absolute;
-    bottom: 20px;
-    left: 40px;
-    display: flex;
-    gap: 30px;
-  }
-
-  .btn {
-    border: 3px solid black;
-    padding: 10px 35px;
-    font-size: 24px;
-    cursor: pointer;
-    background: none;
-  }
+    .tile:hover {
+        background: #003bbd;
+        transform: scale(1.05);
+    }
 </style>
-
 </head>
+
 <body>
 
-<div class="outer-box">
+<div class="board">
 
-  <div class="title-box">Jeopardy</div>
+    <!-- Categories -->
+    <div class="category">Question</div>
+    <div class="category">Question</div>
+    <div class="category">Question</div>
+    <div class="category">Question</div>
+    <div class="category">Question</div>
+    <div class="category">Question</div>
 
-  <!-- 5 x 5 grid -->
-  <div class="grid-box">
-    <button class="tile"></button>
-    <button class="tile"></button>
-    <button class="tile"></button>
-    <button class="tile"></button>
-    <button class="tile"></button>
+    <!-- Row 1 -->
+    <div class="tile">$200</div>
+    <div class="tile">$200</div>
+    <div class="tile">$200</div>
+    <div class="tile">$200</div>
+    <div class="tile">$200</div>
+    <div class="tile">$200</div>
 
-    <button class="tile"></button>
-    <button class="tile"></button>
-    <button class="tile"></button>
-    <button class="tile"></button>
-    <button class="tile"></button>
+    <!-- Row 2 -->
+    <div class="tile">$400</div>
+    <div class="tile">$400</div>
+    <div class="tile">$400</div>
+    <div class="tile">$400</div>
+    <div class="tile">$400</div>
+    <div class="tile">$400</div>
 
-    <button class="tile"></button>
-    <button class="tile"></button>
-    <button class="tile"></button>
-    <button class="tile"></button>
-    <button class="tile"></button>
+    <!-- Row 3 -->
+    <div class="tile">$600</div>
+    <div class="tile">$600</div>
+    <div class="tile">$600</div>
+    <div class="tile">$600</div>
+    <div class="tile">$600</div>
+    <div class="tile">$600</div>
 
-    <button class="tile"></button>
-    <button class="tile"></button>
-    <button class="tile"></button>
-    <button class="tile"></button>
-    <button class="tile"></button>
+    <!-- Row 4 -->
+    <div class="tile">$800</div>
+    <div class="tile">$800</div>
+    <div class="tile">$800</div>
+    <div class="tile">$800</div>
+    <div class="tile">$800</div>
+    <div class="tile">$800</div>
 
-    <button class="tile"></button>
-    <button class="tile"></button>
-    <button class="tile"></button>
-    <button class="tile"></button>
-    <button class="tile"></button>
-  </div>
-
-  <div class="bottom-buttons">
-    <button class="btn">Start</button>
-    <button class="btn">End</button>
-  </div>
+    <!-- Row 5 -->
+    <div class="tile">$1000</div>
+    <div class="tile">$1000</div>
+    <div class="tile">$1000</div>
+    <div class="tile">$1000</div>
+    <div class="tile">$1000</div>
+    <div class="tile">$1000</div>
 
 </div>
+<div class="bottom-end-btn">
+    <button class="end-btn" onclick="location.href='{% url 'index' %}'">End Game</button>
+</div>
 
+<style>
+.bottom-end-btn {
+    text-align: center;
+    margin-top: 800px;
+   
+}   
+
+.end-btn {
+    background: #990000;
+    border: 3px solid #660000;
+    color: white;
+    padding: 10px 15px;
+    font-size: 20px;
+    cursor: pointer;
+    font-family: Arial Black, sans-serif;
+    border-radius: 6px;
+    transition: 0.2s;
+    margin-left: -150px;
+}
+
+.end-btn:hover {
+    background: #cc0000;
+    transform: scale(1.05);
+}
+</style>
 </body>
 </html>

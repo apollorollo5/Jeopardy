@@ -1,0 +1,7 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Django migrations (keep __init__.py so Django sees the package)
+*/migrations/*
+!*/migrations/__init__.py

@@ -53,6 +53,16 @@
         transform: scale(1.05);
     }
 
+    /* Style for tiles that have already been played */
+    .tile[data-played="true"] {
+        background: #000428 !important; /* Matches body background */
+        color: #000428 !important;     /* Hides the dollar value */
+        cursor: default;
+        transform: none !important;
+        pointer-events: none;          /* Prevents clicks on played tile */
+        border-color: #000428;
+    }
+
     .score-box {
         margin-top: 25px;
         background: #001f7b;
@@ -122,73 +132,291 @@
         font-size: 20px;
         cursor: pointer;
     }
+
+    /* Style for the Reveal Button */
+    #reveal-btn {
+        background: #3366cc;
+        color: white;
+        border: 3px solid #1a3a7c;
+        padding: 15px 30px;
+        font-size: 24px;
+        cursor: pointer;
+        margin-top: 20px;
+        border-radius: 8px;
+        font-family: Arial Black, sans-serif;
+        transition: 0.2s;
+    }
+
+    #reveal-btn:hover {
+        background: #4477dd;
+    }
+
+    /* Answer Buttons */
+    .answer-btn {
+        background: #008000; /* Green for Correct */
+        color: white;
+        border: 3px solid #005500;
+        padding: 10px 15px;
+        font-size: 18px;
+        cursor: pointer;
+        margin: 0 10px;
+        font-family: Arial Black, sans-serif;
+        border-radius: 6px;
+        transition: 0.2s;
+    }
+
+    .answer-btn.incorrect {
+        background: #990000; /* Red for Incorrect */
+        border-color: #660000;
+    }
+
+    .answer-btn:hover {
+        transform: scale(1.05);
+    }
+
 </style>
 </head>
 
 <body>
 
-<!-- Score Box -->
-<div class="score-box">
-    Total: $0
-</div>
+    {% csrf_token %} <div class="score-box">
+        Total: ${{ current_score }}
+    </div>
 
-<div class="board">
+    <div class="board">
 
-    <!-- Dynamic Categories -->
-    {% for title, questions in board_state.items %}
-    <div class="category">{{ title }}</div>
-    {% endfor %}
+        {% for title, questions in board_state.items %}
+        <div class="category">{{ title }}</div>
+        {% endfor %}
 
-    <!-- Dynamically Generated Tiles -->
-    {% for value in values_list %}
-        {% for title, data in board_state.items %}
-            {% for question in data.questions %}
-                {% if question.value == value %}
-                    <div class="tile" onclick="openQuestion('{{ question.id }}', '{{ question.value }}')">${{ value }}</div>
-                {% endif %}
+        {% for value in values_list %}
+            {% for title, data in board_state.items %}
+                {% for question in data.questions %}
+                    {% if question.value == value and not question.is_answered %} 
+                        <div 
+                            class="tile" 
+                            data-question-id="{{ question.id }}"
+                            onclick="openQuestion('{{ question.id }}', '{{ question.value }}', this)"
+                        >
+                            ${{ value }}
+                        </div>
+                    {% elif question.value == value and question.is_answered %}
+                        <div 
+                            class="tile" 
+                            data-question-id="{{ question.id }}"
+                            data-played="true"
+                        >
+                            ${{ value }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
             {% endfor %}
         {% endfor %}
-    {% endfor %}
 
-</div>
-
-<div class="bottom-end-btn">
-    <a href="{% url 'home' %}" class="end-btn">End Game</a>
-</div>
-
-<!-- POPUP HTML -->
-<div id="popup" class="popup">
-    <div class="popup-content">
-        <h2 id="popup-question">Question goes here</h2>
-        <button class="close-btn" onclick="closePopup()">Close</button>
     </div>
-</div>
 
-<!-- POPUP JAVASCRIPT -->
-<script>
-function openQuestion(questionId, value) {
-    // Fetch the question from the server
-    fetch(`/api/question/${questionId}/`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                document.getElementById("popup-question").innerText = "Error loading question";
-            } else {
-                document.getElementById("popup-question").innerText = data.question_text;
+    <div class="bottom-end-btn">
+        <a href="{% url 'home' %}" class="end-btn">End Game</a>
+    </div>
+
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <h2 id="popup-category">CATEGORY TITLE</h2>
+            <p id="popup-question">Question goes here</p>
+
+            <div id="reveal-section">
+                <button id="reveal-btn" onclick="revealAnswer()">Click to Reveal Answer</button>
+            </div>
+
+            <div id="answer-section" style="display: none;">
+                <p style="font-size: 24px; color: #fff;">Answer:</p>
+                <p id="popup-answer" style="font-size: 38px; margin-top: 10px; color: #ffeb3b;"></p>
+                
+                <div id="feedback-buttons" style="margin-top: 25px;">
+                    <button class="answer-btn" onclick="submitAnswer(true)">I Got It Correct!</button>
+                    <button class="answer-btn incorrect" onclick="submitAnswer(false)">Incorrect</button>
+                </div>
+            </div>
+            
+            <button id="initial-close-btn" class="close-btn" onclick="closePopup()">Close</button>
+
+        </div>
+    </div>
+
+    <script>
+    // Global variables for game state - Initialized from Django context
+    let currentScore = {{ current_score }}; 
+    const gameId = {{ game_id }};         
+
+    const popup = document.getElementById('popup');
+    const scoreBox = document.querySelector('.score-box');
+    const popupCategory = document.getElementById('popup-category');
+    const popupQuestionElement = document.getElementById("popup-question");
+    const popupAnswerElement = document.getElementById("popup-answer");
+    const revealSection = document.getElementById('reveal-section');
+    const answerSection = document.getElementById('answer-section');
+    const initialCloseBtn = document.getElementById('initial-close-btn');
+
+    // --- NEW HELPER FUNCTION TO GET CSRF TOKEN ---
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
             }
-            document.getElementById("popup").style.display = "flex";
+        }
+        // Fallback: Check the hidden input generated by {% csrf_token %}
+        if (!cookieValue) {
+            const csrfInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+            if (csrfInput) {
+                cookieValue = csrfInput.value;
+            }
+        }
+        return cookieValue;
+    }
+    // ---------------------------------------------
+
+
+    // Helper to update the score display
+    function updateScoreDisplay(newScore) {
+        currentScore = newScore;
+        scoreBox.innerHTML = `Total: $${currentScore}`;
+    }
+
+
+    function openQuestion(questionId, value, tileElement) {
+        if (tileElement.getAttribute('data-played') === 'true') {
+            return; 
+        }
+        
+        // Reset popup state and store data
+        popupQuestionElement.innerText = "Loading...";
+        popupCategory.innerText = "";
+        popupAnswerElement.innerText = "";
+        revealSection.style.display = 'block'; 
+        answerSection.style.display = 'none'; 
+        initialCloseBtn.style.display = 'block'; 
+        popup.dataset.questionId = questionId;
+        popup.dataset.value = value;
+        
+        // Hide tile value and disable clicks while fetching
+        tileElement.style.color = '#000428';
+        tileElement.style.pointerEvents = 'none';
+
+        // Fetch the question from the server
+        fetch(`/api/question/${questionId}/`)
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                popupCategory.innerText = data.category;
+                popupQuestionElement.innerText = data.question_text;
+                popup.dataset.answerText = data.answer_text; // Store answer for reveal
+                initialCloseBtn.style.display = 'none'; 
+                popup.style.display = "flex";
+                tileElement.style.pointerEvents = 'auto'; 
+            })
+            .catch(error => {
+                console.error("Error loading question:", error);
+                popupQuestionElement.innerText = "Error loading question. Please try again.";
+                initialCloseBtn.style.display = 'block';
+                popup.style.display = "flex";
+                tileElement.style.pointerEvents = 'auto';
+            });
+    }
+
+
+    function revealAnswer() {
+        const answerText = popup.dataset.answerText;
+        
+        // Display answer and switch sections
+        popupAnswerElement.innerText = answerText;
+        revealSection.style.display = 'none';
+        answerSection.style.display = 'block';
+    }
+
+
+    /**
+     * 3. Submits the answer to the server, updates score, and closes popup.
+     * @param {boolean} isCorrect - True if the player got the answer right.
+     */
+    function submitAnswer(isCorrect) {
+        const questionId = popup.dataset.questionId;
+        const tileElement = document.querySelector(`.tile[data-question-id="${questionId}"]`);
+        
+        // --- CRITICAL FIX: INCLUDE CSRF TOKEN IN HEADERS ---
+        const csrfToken = getCookie('csrftoken');
+        const headers = {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken, // This sends the required token
+        };
+
+        fetch(`/api/game/${gameId}/answer/${questionId}/`, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({ is_correct: isCorrect })
+        })
+        .then(response => {
+            // Check for non-OK status codes (like 403 Forbidden/CSRF error)
+            if (!response.ok) {
+                if (response.status === 403) {
+                    // This specific error suggests the CSRF token fix didn't fully work 
+                    // or the URL is incorrect/missing a trailing slash.
+                    console.error("403 Forbidden: Check CSRF token or URL trailing slash.");
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                updateScoreDisplay(data.new_score); // Update the score display
+                
+                // Mark the tile as played on the frontend
+                if (tileElement) {
+                    tileElement.setAttribute('data-played', 'true');
+                }
+                
+                // Check for game completion and redirect if finished
+                if (data.game_complete) {
+                    window.location.href = `/game/${gameId}/complete/`;
+                }
+                
+                closePopup(); // Close the popup after successful submission
+            } else {
+                console.error("Error submitting answer:", data.error);
+                alert(`Error submitting answer: ${data.error}`);
+            }
         })
         .catch(error => {
-            console.error("Error:", error);
-            document.getElementById("popup-question").innerText = "Error loading question";
-            document.getElementById("popup").style.display = "flex";
+            console.error("Fetch error:", error);
+            alert("A network error occurred while submitting the answer. Please check the console for CSRF or URL errors.");
         });
-}
+    }
 
-function closePopup() {
-    document.getElementById("popup").style.display = "none";
-}
-</script>
+
+    function closePopup() {
+        popup.style.display = "none";
+        
+        // If the tile was clicked but the popup was closed without answering 
+        // (e.g., error), we need to re-show the value and re-enable clicks.
+        const questionId = popup.dataset.questionId;
+        if (questionId) {
+            const tileElement = document.querySelector(`.tile[data-question-id="${questionId}"]`);
+            if (tileElement && tileElement.getAttribute('data-played') !== 'true') {
+                tileElement.style.color = '#ffcc33'; // Re-show value
+                tileElement.style.pointerEvents = 'auto'; // Re-enable clicks
+            }
+        }
+    }
+    </script>
 
 </body>
 </html>

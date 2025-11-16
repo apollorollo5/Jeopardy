@@ -62,7 +62,7 @@ Each question has: value (200,400,600,800,1000), question (string), answer (stri
   ]
 }}
 
-Make questions fun, interesting, varied difficulty, family-friendly."""
+Make questions fun, interesting, varied difficulty based on value, family-friendly. The high the value, the more difficult the question. For example, a $200 question should be easy, while a $1000 question should be challenging."""
         
         try:
             # Try to get JSON from Gemini

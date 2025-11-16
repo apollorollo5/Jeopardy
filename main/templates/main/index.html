@@ -58,8 +58,15 @@
   <div class="title">Jeopardy!</div>
 
   <div class="button-area">
-    <button class="btn-box" onclick="location.href='game.html'">Start</button>
+    <form method="post" action="{% url 'main:start' %}">
+      {% csrf_token %}
+      <input type="hidden" name="player_name" value="{{ request.user.username }}">
+      <button type="submit" class="btn-box">Start</button>
+    </form>
     <button class="btn-box" onclick="window.close()">Exit</button>
+  </div>
+  <div style="text-align:center; margin-top:10px;">
+    <a href="/admin/">Admin</a>
   </div>
 </div>
 

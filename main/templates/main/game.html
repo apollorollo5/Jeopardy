@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Jeopardy - Question</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 40px; }
+      .question { font-size: 24px; margin-bottom: 20px; }
+      .choices button { display:block; margin:8px 0; padding:12px 18px; font-size:18px }
+    </style>
+  </head>
+  <body>
+    <h1>Question</h1>
+    <div class="question">{{ question.text }}</div>
+
+    <form method="post" action="{% url 'main:answer' game.id %}">
+      {% csrf_token %}
+      <input type="hidden" name="question_id" value="{{ question.id }}">
+      <div class="choices">
+        <button type="submit" name="selected_choice" value="A">A. {{ question.choice_a }}</button>
+        <button type="submit" name="selected_choice" value="B">B. {{ question.choice_b }}</button>
+        <button type="submit" name="selected_choice" value="C">C. {{ question.choice_c }}</button>
+        <button type="submit" name="selected_choice" value="D">D. {{ question.choice_d }}</button>
+      </div>
+    </form>
+
+    <p>Score: {{ game.score }}</p>
+  </body>
+</html>
